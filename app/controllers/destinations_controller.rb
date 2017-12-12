@@ -1,7 +1,11 @@
 class DestinationsController < ApplicationController
 
     def index
-      @destinations = Destination.all
+      if params[:search]
+        @destinations = Destination.search(params[:search])
+     else
+       @destinations = Destination.all
+     end
       json_response(@destinations)
     end
 
@@ -11,8 +15,8 @@ class DestinationsController < ApplicationController
     end
 
     def create
-      @destination = Destination.create(destination_params)
-      json_response(@destination)
+      @destination = Destination.create!(destination_params)
+      json_response(@destination, :created)
     end
 
     def update
@@ -26,10 +30,6 @@ class DestinationsController < ApplicationController
     end
 
     private
-    def json_response(object, status = :ok)
-      render json: object, status: status
-    end
-
     def destination_params
       params.permit(:city)
     end
